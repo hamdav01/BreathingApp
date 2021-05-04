@@ -1824,6 +1824,13 @@
   "resolved" "https://registry.npmjs.org/@types/prop-types/-/prop-types-15.7.3.tgz"
   "version" "15.7.3"
 
+"@types/ramda@^0.27.40":
+  "integrity" "sha512-V99ZfTH2tqVYdLDAlgh2uT+N074HPgqnAsMjALKSBqogYd0HbuuGMqNukJ6fk9Ml/Htaus76fsc4Yh3p7q1VdQ=="
+  "resolved" "https://registry.npmjs.org/@types/ramda/-/ramda-0.27.40.tgz"
+  "version" "0.27.40"
+  dependencies:
+    "ts-toolbelt" "^6.15.1"
+
 "@types/react-native@~0.63.2":
   "integrity" "sha512-sBXvvtJaIUSXQLDh9NZitx1KHkKUdBLZy34lFKJaIXtpHIh5OEbBXeyUTFBtFwjk/RD0tneAtUqsdhheZRzAzw=="
   "resolved" "https://registry.npmjs.org/@types/react-native/-/react-native-0.63.52.tgz"
@@ -5306,6 +5313,11 @@
   "resolved" "https://registry.npmjs.org/querystringify/-/querystringify-2.2.0.tgz"
   "version" "2.2.0"
 
+"ramda@^0.27.1":
+  "integrity" "sha512-PgIdVpn5y5Yns8vqb8FzBUEYn98V3xcPgawAkkgj0YJ0qDsnHCiNmZYfOGMgOvoB0eWFLpYbhxUR3mxfDIMvpw=="
+  "resolved" "https://registry.npmjs.org/ramda/-/ramda-0.27.1.tgz"
+  "version" "0.27.1"
+
 "range-parser@~1.2.1":
   "integrity" "sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg=="
   "resolved" "https://registry.npmjs.org/range-parser/-/range-parser-1.2.1.tgz"
@@ -6194,6 +6206,11 @@
   "integrity" "sha512-yaOH/Pk/VEhBWWTlhI+qXxDFXlejDGcQipMlyxda9nthulaxLZUNcUqFxokp0vcYnvteJln5FNQDRrxj3YcbVw=="
   "resolved" "https://registry.npmjs.org/toidentifier/-/toidentifier-1.0.0.tgz"
   "version" "1.0.0"
+
+"ts-toolbelt@^6.15.1":
+  "integrity" "sha512-FZIXf1ksVyLcfr7M317jbB67XFJhOO1YqdTcuGaq9q5jLUoTikukZ+98TPjKiP2jC5CgmYdWWYs0s2nLSU0/1A=="
+  "resolved" "https://registry.npmjs.org/ts-toolbelt/-/ts-toolbelt-6.15.5.tgz"
+  "version" "6.15.5"
 
 "type-fest@^0.3.1":
   "integrity" "sha512-cUGJnCdr4STbePCgqNFbpVNCepa+kAVohJs1sLhxzdH+gnEoOd8VhbYa7pD3zZYGiURWM2xzEII3fQcRizDkYQ=="

@@ -5,7 +5,7 @@ export default function useCountUp(
   intervalTime: number,
   doneCallback: () => void
 ) {
-  const [counter, setCounter] = useState(0);
+  const [counter, setCounter] = useState(1);
   useEffect(() => {
     const removeInterval = setInterval(() => {
       setCounter((count) => 1 + count);
@@ -13,7 +13,7 @@ export default function useCountUp(
     const removeTimeout = setTimeout(() => {
       clearInterval(removeInterval);
       doneCallback();
-    }, countUpAmount * intervalTime);
+    }, (countUpAmount + 1) * intervalTime);
     return () => {
       clearTimeout(removeTimeout);
       clearInterval(removeInterval);

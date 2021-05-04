@@ -9,11 +9,12 @@ interface Props {
   onDone: () => void;
 }
 
-const HoldBreath: React.VFC<Props> = ({ onDone }) => {
+const RecoveryBreath: React.VFC<Props> = ({ onDone }) => {
   const [counter] = useCountUp(countUpAmount, intervalTime, onDone);
+  const amount = 15 - counter;
   return (
     <View style={styles.container}>
-      <Text style={styles.counter}>{counter}</Text>
+      <Text style={styles.counter}>{amount}</Text>
     </View>
   );
 };
@@ -26,4 +27,4 @@ const styles = StyleSheet.create({
   button: {},
 });
 
-export default HoldBreath;
+export default RecoveryBreath;

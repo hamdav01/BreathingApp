@@ -1,4 +1,4 @@
 export type RootStackParamList = {
   Selection: undefined;
-  Run: undefined;
+  Run: { breathingSpeed: number };
 };
