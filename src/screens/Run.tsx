@@ -17,45 +17,46 @@ type Props = StackScreenProps<RootStackParamList, 'Run'>;
 
 interface GetRunStateConfig {
   breathingSpeed: number;
-  onDone: (x0: RunStage) => void;
+  dispatchNextStage: () => void;
 }
 const getRunState = (
   nextStage: RunStage,
-  { breathingSpeed, onDone }: GetRunStateConfig
+  { breathingSpeed, dispatchNextStage }: GetRunStateConfig
 ) => {
   switch (nextStage) {
     case RunStage.BREATHING:
       return (
-        <Breathing
-          breathingSpeed={breathingSpeed}
-          onDone={() => onDone(RunStage.HOLDING_BREATH)}
-        />
+        <Breathing breathingSpeed={breathingSpeed} onDone={dispatchNextStage} />
       );
     case RunStage.HOLDING_BREATH:
-      return <HoldBreath onDone={() => onDone(RunStage.RECOVERY_BREATH)} />;
+      return <HoldBreath onDone={dispatchNextStage} />;
     case RunStage.RECOVERY_BREATH:
-      return <RecoveryBreath onDone={() => onDone(RunStage.BREATHING)} />;
+      return <RecoveryBreath onDone={dispatchNextStage} />;
   }
 };
 
 export const RunScreen: React.VFC<Props> = ({ route, navigation }) => {
-  const { breathingSpeed } = route.params;
-  const [breathingState, dispatch] = useReducer(breathReducer, initBreathState);
-  const onDone = compose(dispatch, setNextBreathingStage);
+  const { breathingSpeed, rounds } = route.params;
+  const [breathingState, dispatch] = useReducer(breathReducer, {
+    ...initBreathState,
+    rounds,
+  });
+  const dispatchNextStage = compose(dispatch, setNextBreathingStage);
   const runComponent = getRunState(breathingState.currentStage, {
     breathingSpeed,
-    onDone,
+    dispatchNextStage,
   });
 
   return (
     <View style={styles.container}>
-      {runComponent}
       <Button
         onPress={() => {
           navigation.pop();
         }}
         title='Quit'
       />
+      {runComponent}
+      <Button onPress={() => dispatchNextStage()} title='Next' />
     </View>
   );
 };

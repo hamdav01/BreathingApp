@@ -1,3 +1,5 @@
+import { RoundType } from '../../components/Rounds';
+
 enum BreathingActions {
   NEXT = 'NEXT',
   FINISH = 'FINISH',
@@ -13,17 +15,32 @@ type Actions = ReturnType<typeof setNextBreathingStage>;
 
 interface ReturnTypeNext {
   type: BreathingActions.NEXT;
-  data: { nextStage: RunStage };
 }
-
+const initRounds = [
+  {
+    time: 130,
+    id: '1',
+  },
+] as RoundType[];
 export const initBreathState = {
   currentStage: RunStage.BREATHING,
+  rounds: initRounds,
 };
 
-export const setNextBreathingStage = (nextStage: RunStage): ReturnTypeNext => ({
+export const setNextBreathingStage = (): ReturnTypeNext => ({
   type: BreathingActions.NEXT,
-  data: { nextStage },
 });
+
+const updateToNextStage = (nextStage: RunStage) => {
+  switch (nextStage) {
+    case RunStage.BREATHING:
+      return RunStage.HOLDING_BREATH;
+    case RunStage.HOLDING_BREATH:
+      return RunStage.RECOVERY_BREATH;
+    case RunStage.RECOVERY_BREATH:
+      return RunStage.BREATHING;
+  }
+};
 
 export const breathReducer = (
   state: typeof initBreathState,
@@ -31,13 +48,10 @@ export const breathReducer = (
 ) => {
   switch (action.type) {
     case BreathingActions.NEXT:
-      console.log('next: ', action);
-
-      console.log('next data: ', {
+      return {
         ...state,
-        currentStage: action.data.nextStage,
-      });
-      return { ...state, currentStage: action.data.nextStage };
+        currentStage: updateToNextStage(state.currentStage),
+      };
     default:
       return state;
   }
