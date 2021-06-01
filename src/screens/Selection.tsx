@@ -15,6 +15,7 @@ import { eqProps, findIndex, inc, update, prop } from 'ramda';
 import shortid from 'shortid';
 import { capitalizeFirstLetter } from './utils/String';
 import { Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 type Props = StackScreenProps<RootStackParamList, 'Selection'>;
 const BreathingSpeeds = {
@@ -23,22 +24,60 @@ const BreathingSpeeds = {
   FAST: 2000,
 } as const;
 
-const BreathingPicks = Object.entries(BreathingSpeeds);
+// const BreathingPicks = Object.entries(BreathingSpeeds);
 
-const generateBreathingPicks = ([label, value]: [
-  string,
-  Values<typeof BreathingSpeeds>
-]) => (
-  <Picker.Item
-    label={capitalizeFirstLetter(label)}
-    value={value}
-    key={shortid.generate()}
-  />
-);
+// const generateBreathingPicks = ([label, value]: [
+//   string,
+//   Values<typeof BreathingSpeeds>
+// ]) => (
+//   <Picker.Item
+//     label={capitalizeFirstLetter(label)}
+//     value={value}
+//     key={shortid.generate()}
+//   />
+// );
+
+interface BreathingPicks {
+  name: any;
+  speed: Values<typeof BreathingSpeeds>;
+}
+
+const breathingPicks: BreathingPicks[] = [
+  {
+    name: 'turtle',
+    speed: BreathingSpeeds.SLOW,
+  },
+  {
+    name: 'human',
+    speed: BreathingSpeeds.MEDIUM,
+  },
+  {
+    name: 'rabbit',
+    speed: BreathingSpeeds.FAST,
+  },
+];
+
+const createGenerateBreathingPicks =
+  (
+    currentBreathingSpeed: Values<typeof BreathingSpeeds>,
+    onPress: (breathingSpeed: Values<typeof BreathingSpeeds>) => void
+  ) =>
+  ({ name, speed }: BreathingPicks) =>
+    (
+      <MaterialCommunityIcons
+        key={name + speed}
+        name={name}
+        size={42}
+        color={currentBreathingSpeed === speed ? 'black' : 'grey'}
+        onPress={() => onPress(speed)}
+      />
+    );
 
 const SelectionScreen: React.VFC<Props> = ({ navigation }) => {
   const [rounds, setRounds] = useState<RoundType[]>([]);
-  const [breathingSpeed, setBreathingSpeed] = useState(BreathingSpeeds.MEDIUM);
+  const [breathingSpeed, setBreathingSpeed] = useState<
+    Values<typeof BreathingSpeeds>
+  >(BreathingSpeeds.MEDIUM);
   const onPress = () => navigation.navigate('Run', { breathingSpeed, rounds });
   const onAddRound = () => {
     setRounds((currentRounds) => [
@@ -52,57 +91,67 @@ const SelectionScreen: React.VFC<Props> = ({ navigation }) => {
     setRounds(update(index, round, rounds));
   };
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.breathingSpeedText}>Breathing speed: </Text>
-        <Picker
-          selectedValue={breathingSpeed}
-          style={{ height: 50, width: 150, alignSelf: 'center' }}
-          onValueChange={setBreathingSpeed}
-        >
-          {BreathingPicks.map(generateBreathingPicks)}
-        </Picker>
-      </View>
-      <ScrollView contentContainerStyle={styles.roundContainer}>
-        {rounds.map((round, index) => (
-          <Round
-            key={prop('id', round)}
-            index={inc(index)}
-            onValueChange={onValueChange}
-            {...round}
-          />
-        ))}
-        <TouchableWithoutFeedback onPress={onAddRound}>
-          <Ionicons name='ios-add-circle-outline' size={60} color='black' />
-        </TouchableWithoutFeedback>
-      </ScrollView>
-      <View style={styles.startButtoContainer}>
-        <Button onPress={onPress} title='Start' />
+    <View style={styles.root}>
+      <View style={styles.container}>
+        <Text style={styles.titleText}>Breathing Speeds</Text>
+        <View style={styles.header}>
+          {breathingPicks.map(
+            createGenerateBreathingPicks(breathingSpeed, setBreathingSpeed)
+          )}
+        </View>
+        <Text style={styles.titleText}>Rounds</Text>
+        <ScrollView style={styles.scrollView}>
+          <View style={styles.roundContainer}>
+            {rounds.map((round, index) => (
+              <Round
+                key={prop('id', round)}
+                index={inc(index)}
+                onValueChange={onValueChange}
+                {...round}
+              />
+            ))}
+            <TouchableWithoutFeedback onPress={onAddRound}>
+              <Ionicons name='ios-add-circle-outline' size={60} color='black' />
+            </TouchableWithoutFeedback>
+          </View>
+        </ScrollView>
+        <View style={styles.startButtoContainer}>
+          <Button onPress={onPress} title='Start' />
+        </View>
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  root: {
+    backgroundColor: '#fff',
+    flex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'stretch',
-  },
-  breathingSpeedText: {
-    alignSelf: 'center',
+    margin: 16,
   },
   header: {
-    borderBottomWidth: 1,
-    justifyContent: 'center',
-    marginVertical: 6,
-    paddingVertical: 6,
+    justifyContent: 'space-around',
+    paddingVertical: 16,
     flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderColor: '#d3d3d3',
+  },
+  scrollView: {
+    borderBottomWidth: 1,
+    borderColor: '#d3d3d3',
   },
   roundContainer: {
-    height: 250,
     alignItems: 'center',
-    marginHorizontal: 26,
+  },
+  titleText: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
   startButtoContainer: {
     marginVertical: 26,
