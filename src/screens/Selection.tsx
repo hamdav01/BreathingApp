@@ -1,41 +1,26 @@
 import React, { useState } from 'react';
 import {
-  Button,
   StyleSheet,
   View,
-  Text,
-  TouchableWithoutFeedback,
   ScrollView,
+  Text,
+  TouchableOpacity,
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
 import { StackScreenProps } from '@react-navigation/stack';
 import { RootStackParamList, Values } from './utils/Types';
 import Round, { RoundType } from '../components/Rounds';
 import { eqProps, findIndex, inc, update, prop } from 'ramda';
 import shortid from 'shortid';
-import { capitalizeFirstLetter } from './utils/String';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import CustomButton from '../components/Button';
 
 type Props = StackScreenProps<RootStackParamList, 'Selection'>;
-const BreathingSpeeds = {
+export const BreathingSpeeds = {
   SLOW: 4000,
   MEDIUM: 3000,
   FAST: 2000,
 } as const;
-
-// const BreathingPicks = Object.entries(BreathingSpeeds);
-
-// const generateBreathingPicks = ([label, value]: [
-//   string,
-//   Values<typeof BreathingSpeeds>
-// ]) => (
-//   <Picker.Item
-//     label={capitalizeFirstLetter(label)}
-//     value={value}
-//     key={shortid.generate()}
-//   />
-// );
 
 interface BreathingPicks {
   name: any;
@@ -78,7 +63,11 @@ const SelectionScreen: React.VFC<Props> = ({ navigation }) => {
   const [breathingSpeed, setBreathingSpeed] = useState<
     Values<typeof BreathingSpeeds>
   >(BreathingSpeeds.MEDIUM);
-  const onPress = () => navigation.navigate('Run', { breathingSpeed, rounds });
+  const onPress = () =>
+    navigation.navigate('Run', {
+      breathingSpeed,
+      rounds: rounds.length === 0 ? undefined : rounds,
+    });
   const onAddRound = () => {
     setRounds((currentRounds) => [
       ...currentRounds,
@@ -90,6 +79,12 @@ const SelectionScreen: React.VFC<Props> = ({ navigation }) => {
     const index = findIndex(equalsId, rounds);
     setRounds(update(index, round, rounds));
   };
+  const onDelete = (idToBeDeleted: string) => {
+    setRounds((currentRounds) =>
+      currentRounds.filter(({ id }) => id !== idToBeDeleted)
+    );
+  };
+  const currentAmountOfRound = rounds.length === 0 ? 'Infinity' : rounds.length;
   return (
     <View style={styles.root}>
       <View style={styles.container}>
@@ -99,24 +94,28 @@ const SelectionScreen: React.VFC<Props> = ({ navigation }) => {
             createGenerateBreathingPicks(breathingSpeed, setBreathingSpeed)
           )}
         </View>
-        <Text style={styles.titleText}>Rounds</Text>
+        <View style={styles.fill}>
+          <Text
+            style={styles.titleText}
+          >{`Rounds: ${currentAmountOfRound}`}</Text>
+          <TouchableOpacity onPress={onAddRound}>
+            <Ionicons name='ios-add-circle-outline' size={40} color='green' />
+          </TouchableOpacity>
+        </View>
         <ScrollView style={styles.scrollView}>
           <View style={styles.roundContainer}>
-            {rounds.map((round, index) => (
+            {rounds.map((round) => (
               <Round
                 key={prop('id', round)}
-                index={inc(index)}
                 onValueChange={onValueChange}
+                onDelete={onDelete}
                 {...round}
               />
             ))}
-            <TouchableWithoutFeedback onPress={onAddRound}>
-              <Ionicons name='ios-add-circle-outline' size={60} color='black' />
-            </TouchableWithoutFeedback>
           </View>
         </ScrollView>
-        <View style={styles.startButtoContainer}>
-          <Button onPress={onPress} title='Start' />
+        <View style={styles.startButtonContainer}>
+          <CustomButton onPress={onPress} text='Start' />
         </View>
       </View>
     </View>
@@ -128,11 +127,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     flex: 1,
   },
+  fill: {
+    marginTop: 10,
+    display: 'flex',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'stretch',
-    margin: 16,
+    marginHorizontal: 16,
+    marginVertical: 10,
   },
   header: {
     justifyContent: 'space-around',
@@ -153,7 +159,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
   },
-  startButtoContainer: {
+  startButtonContainer: {
     marginVertical: 26,
     alignItems: 'center',
   },

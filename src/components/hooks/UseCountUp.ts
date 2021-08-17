@@ -6,18 +6,18 @@ export default function useCountUp(
   doneCallback: () => void
 ) {
   const [counter, setCounter] = useState(1);
+  const getCounter = () => counter;
   useEffect(() => {
     const removeInterval = setInterval(() => {
       setCounter((count) => 1 + count);
+      if (countUpAmount < getCounter()) {
+        clearInterval(removeInterval);
+        doneCallback();
+      }
     }, intervalTime);
-    const removeTimeout = setTimeout(() => {
-      clearInterval(removeInterval);
-      doneCallback();
-    }, (countUpAmount + 1) * intervalTime);
     return () => {
-      clearTimeout(removeTimeout);
       clearInterval(removeInterval);
     };
-  }, []);
+  }, [counter]);
   return [counter];
 }

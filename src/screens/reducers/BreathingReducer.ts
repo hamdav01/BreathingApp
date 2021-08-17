@@ -1,5 +1,8 @@
+import { head, tail } from 'ramda';
+import shortid from 'shortid';
 import { RoundType } from '../../components/Rounds';
-
+import { BreathingSpeeds } from '../../screens/Selection';
+import { Values } from '../utils/Types';
 enum BreathingActions {
   NEXT = 'NEXT',
   FINISH = 'FINISH',
@@ -9,6 +12,7 @@ export enum RunStage {
   BREATHING = 'Breathing',
   HOLDING_BREATH = 'HoldingBreath',
   RECOVERY_BREATH = 'RecoveryBreath',
+  NOT_STARTED = 'NotStarted',
 }
 
 type Actions = ReturnType<typeof setNextBreathingStage>;
@@ -16,41 +20,56 @@ type Actions = ReturnType<typeof setNextBreathingStage>;
 interface ReturnTypeNext {
   type: BreathingActions.NEXT;
 }
-const initRounds = [
-  {
-    time: 130,
-    id: '1',
-  },
-] as RoundType[];
-export const initBreathState = {
-  currentStage: RunStage.BREATHING,
-  rounds: initRounds,
-};
 
 export const setNextBreathingStage = (): ReturnTypeNext => ({
   type: BreathingActions.NEXT,
 });
 
-const updateToNextStage = (nextStage: RunStage) => {
-  switch (nextStage) {
-    case RunStage.BREATHING:
-      return RunStage.HOLDING_BREATH;
+export const getUpcomingRound = (rounds?: RoundType[]) => {
+  if (rounds === undefined) {
+    return {
+      rounds: undefined,
+      currentRound: { time: Infinity, id: shortid.generate() },
+    };
+  }
+  return {
+    rounds: tail(rounds),
+    currentRound: head(rounds),
+  };
+};
+
+const updateToNextStage = ({
+  currentStage,
+  rounds,
+}: BreathingReducerConfig) => {
+  switch (currentStage) {
     case RunStage.HOLDING_BREATH:
-      return RunStage.RECOVERY_BREATH;
+      return { currentStage: RunStage.RECOVERY_BREATH };
     case RunStage.RECOVERY_BREATH:
-      return RunStage.BREATHING;
+      return { currentStage: RunStage.BREATHING, ...getUpcomingRound(rounds) };
+    case RunStage.BREATHING:
+      return {
+        currentStage: RunStage.HOLDING_BREATH,
+      };
   }
 };
 
+interface BreathingReducerConfig {
+  currentStage: RunStage;
+  rounds?: RoundType[];
+  currentRound?: RoundType;
+  breathingSpeed: Values<typeof BreathingSpeeds>;
+}
+
 export const breathReducer = (
-  state: typeof initBreathState,
+  state: BreathingReducerConfig,
   action: Actions
 ) => {
   switch (action.type) {
     case BreathingActions.NEXT:
       return {
         ...state,
-        currentStage: updateToNextStage(state.currentStage),
+        ...updateToNextStage(state),
       };
     default:
       return state;

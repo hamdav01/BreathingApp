@@ -11,7 +11,7 @@ interface Props {
 
 const RecoveryBreath: React.VFC<Props> = ({ onDone }) => {
   const [counter] = useCountUp(countUpAmount, intervalTime, onDone);
-  const amount = 15 - counter;
+  const amount = 16 - counter;
   return (
     <View style={styles.container}>
       <Text style={styles.counter}>{amount}</Text>
