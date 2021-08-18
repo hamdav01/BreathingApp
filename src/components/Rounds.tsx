@@ -2,6 +2,7 @@ import React from 'react';
 import Slider from '@react-native-community/slider';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import ButtonSlider from './ButtonSlider';
 export interface RoundType {
   time: number;
   id: string;
@@ -14,19 +15,15 @@ interface Props extends RoundType {
 
 const Round: React.VFC<Props> = ({ id, time, onValueChange, onDelete }) => {
   return (
-    <View>
-      <Text>Time: {time}</Text>
+    <View style={styles.container}>
+      <Text style={styles.text}>Time: {time}</Text>
       <View style={styles.sliderContainer}>
-        <Slider
-          style={{ width: 200, height: 45 }}
-          minimumValue={1}
-          maximumValue={5}
-          step={0.5}
-          onValueChange={(value: number) => onValueChange({ id, time: value })}
-          value={time}
+        <ButtonSlider
+          activeValue={time}
+          onPress={(value: number) => onValueChange({ id, time: value })}
         />
         <TouchableOpacity onPress={() => onDelete(id)}>
-          <MaterialIcons name='highlight-remove' size={32} color='red' />
+          <MaterialIcons name='highlight-remove' size={38} color='red' />
         </TouchableOpacity>
       </View>
     </View>
@@ -35,14 +32,17 @@ const Round: React.VFC<Props> = ({ id, time, onValueChange, onDelete }) => {
 
 const styles = StyleSheet.create({
   container: {
-    textAlign: 'center',
+    marginBottom: 20,
+  },
+  text: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 4,
   },
   sliderContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  textContainer: {
-    textAlign: 'left',
+    justifyContent: 'space-around',
   },
 });
 

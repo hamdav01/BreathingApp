@@ -64,17 +64,9 @@ export const RunScreen: React.VFC<Props> = ({ route, navigation }) => {
     <View style={styles.container}>
       {runComponent}
       <View style={styles.buttonContainer}>
+        <CustomButton onPress={() => dispatchNextStage()} text='Next' />
         <CustomButton
-          onPress={() => {
-            console.log('HEllo');
-            dispatchNextStage();
-          }}
-          text='Next'
-        />
-        <CustomButton
-          onPress={() => {
-            navigation.pop();
-          }}
+          onPress={() => navigation.pop()}
           text='Quit'
           backgroundColor='#a32727'
         />
