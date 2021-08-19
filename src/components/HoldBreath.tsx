@@ -14,17 +14,29 @@ const HoldBreath: React.VFC<Props> = ({ onDone, time }) => {
   const [counter] = useCountUp(timeToHoldBreath - 1, intervalTime, onDone);
   return (
     <View style={styles.container}>
+      <Text style={styles.titleText}>Hold Breath</Text>
       <Text style={styles.counter}>{counter}</Text>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {},
-  counter: {
-    fontSize: 62,
+  container: {
+    flex: 1,
   },
-  button: {},
+  counter: {
+    fontSize: 120,
+    fontWeight: 'bold',
+    alignSelf: 'center',
+    flex: 0.65,
+  },
+  titleText: {
+    fontSize: 42,
+    fontWeight: 'bold',
+    alignSelf: 'center',
+    flex: 0.35,
+    marginTop: 12,
+  },
 });
 
 export default HoldBreath;

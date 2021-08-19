@@ -1,5 +1,4 @@
 import React from 'react';
-import Slider from '@react-native-community/slider';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import ButtonSlider from './ButtonSlider';

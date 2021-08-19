@@ -76,17 +76,11 @@ export const RunScreen: React.VFC<Props> = ({ route, navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  fill: {
-    flex: 1,
-  },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: '#F5F5F5',
   },
   buttonContainer: {
-    display: 'flex',
     flexDirection: 'row',
     bottom: 20,
     position: 'absolute',

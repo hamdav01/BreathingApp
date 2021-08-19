@@ -19,12 +19,13 @@ const Button: React.VFC<ButtonProps> = ({
   const activeStyle = isActive ? styles.activeButton : null;
   const firstStyle = firstValue ? styles.firstButton : null;
   const lastStyle = lastValue ? styles.lastButton : null;
+  const activeTextStyle = isActive ? styles.activeButtonTextStyle : null;
   return (
     <TouchableOpacity
       style={[styles.button, activeStyle, firstStyle, lastStyle]}
       onPress={onPress}
     >
-      <Text style={styles.buttonTextStyle}>{value}</Text>
+      <Text style={[styles.buttonTextStyle, activeTextStyle]}>{value}</Text>
     </TouchableOpacity>
   );
 };
@@ -70,15 +71,17 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
   },
   buttonTextStyle: {
-    fontWeight: '500',
+    fontWeight: 'bold',
     fontSize: 12,
-    color: 'black',
+    color: '#000',
     textAlign: 'center',
     textAlignVertical: 'center',
   },
   activeButton: {
     backgroundColor: '#009933',
-    color: 'white',
+  },
+  activeButtonTextStyle: {
+    color: '#FFF',
   },
   button: {
     borderLeftWidth: 1,

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, StyleSheet, Text } from 'react-native';
+import { Animated, StyleSheet, Text, View } from 'react-native';
 import useCountUp from './hooks/UseCountUp';
 
 const countUpAmount = 29;
@@ -31,29 +31,45 @@ const Breathing: React.VFC<Props> = ({ onDone, breathingSpeed = 3000 }) => {
   }, []);
 
   return (
-    <Animated.View
-      style={{
-        transform: [
-          {
-            scale: scaleAnimation.interpolate({
-              inputRange: [0, 1],
-              outputRange: [1, 4],
-            }),
-          },
-        ],
-      }}
-    >
-      <Text style={styles.counter}>{counter}</Text>
-    </Animated.View>
+    <View style={styles.container}>
+      <Text style={styles.titleText}>Breathing</Text>
+      <View style={styles.test}>
+        <Animated.View
+          style={{
+            transform: [
+              {
+                scale: scaleAnimation.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [1, 4],
+                }),
+              },
+            ],
+          }}
+        >
+          <Text style={styles.counter}>{counter}</Text>
+        </Animated.View>
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {},
+  container: { flex: 1 },
   counter: {
     fontSize: 62,
+    fontWeight: 'bold',
+    alignSelf: 'center',
   },
-  button: {},
+  test: {
+    flex: 0.65,
+  },
+  titleText: {
+    fontSize: 42,
+    flex: 0.35,
+    fontWeight: 'bold',
+    alignSelf: 'center',
+    marginTop: 12,
+  },
 });
 
 export default Breathing;

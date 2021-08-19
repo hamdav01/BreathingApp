@@ -14,17 +14,29 @@ const RecoveryBreath: React.VFC<Props> = ({ onDone }) => {
   const amount = 16 - counter;
   return (
     <View style={styles.container}>
+      <Text style={styles.titleText}>Recovery breath</Text>
       <Text style={styles.counter}>{amount}</Text>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {},
-  counter: {
-    fontSize: 62,
+  container: {
+    flex: 1,
   },
-  button: {},
+  counter: {
+    fontSize: 120,
+    fontWeight: 'bold',
+    alignSelf: 'center',
+    flex: 0.65,
+  },
+  titleText: {
+    fontSize: 42,
+    fontWeight: 'bold',
+    alignSelf: 'center',
+    flex: 0.35,
+    marginTop: 12,
+  },
 });
 
 export default RecoveryBreath;

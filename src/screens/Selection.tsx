@@ -14,6 +14,7 @@ import shortid from 'shortid';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import CustomButton from '../components/Button';
+import { MaterialIcons } from '@expo/vector-icons';
 
 type Props = StackScreenProps<RootStackParamList, 'Selection'>;
 export const BreathingSpeeds = {
@@ -99,7 +100,7 @@ const SelectionScreen: React.VFC<Props> = ({ navigation }) => {
             style={styles.titleText}
           >{`Rounds: ${currentAmountOfRound}`}</Text>
           <TouchableOpacity onPress={onAddRound}>
-            <Ionicons name='ios-add-circle-outline' size={40} color='green' />
+            <Ionicons name='add-circle' size={40} color='#009933' />
           </TouchableOpacity>
         </View>
         <ScrollView style={styles.scrollView}>
@@ -124,7 +125,7 @@ const SelectionScreen: React.VFC<Props> = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   root: {
-    backgroundColor: '#fff',
+    backgroundColor: '#F5F5F5',
     flex: 1,
   },
   fill: {
@@ -135,7 +136,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#F5F5F5',
     alignItems: 'stretch',
     marginHorizontal: 16,
     marginVertical: 10,
