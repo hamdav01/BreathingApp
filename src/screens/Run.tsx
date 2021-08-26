@@ -1,7 +1,8 @@
 import { StackScreenProps } from '@react-navigation/stack';
 import { compose } from 'ramda';
-import React, { useEffect, useReducer, useState } from 'react';
-import { StyleSheet, View, Button } from 'react-native';
+import React, { useEffect, useReducer } from 'react';
+import { useRef } from 'react';
+import { StyleSheet, View } from 'react-native';
 import Breathing from '../components/Breathing';
 import CustomButton from '../components/Button';
 import HoldBreath from '../components/HoldBreath';
@@ -11,6 +12,8 @@ import {
   setNextBreathingStage,
   RunStage,
   getUpcomingRound,
+  setSaveValue,
+  getSavedRounds,
 } from './reducers/BreathingReducer';
 import { convertMinuteIntoSeconds } from './utils/Number';
 import { RootStackParamList } from './utils/Types';
@@ -21,10 +24,16 @@ interface GetRunStateConfig {
   breathingSpeed: number;
   dispatchNextStage: () => void;
   time: number;
+  dispatchSaveValue: (saveValue: number) => void;
 }
 const getRunState = (
   stage: RunStage,
-  { breathingSpeed, dispatchNextStage, time }: GetRunStateConfig
+  {
+    breathingSpeed,
+    dispatchNextStage,
+    time,
+    dispatchSaveValue,
+  }: GetRunStateConfig
 ) => {
   switch (stage) {
     case RunStage.BREATHING:
@@ -32,7 +41,13 @@ const getRunState = (
         <Breathing breathingSpeed={breathingSpeed} onDone={dispatchNextStage} />
       );
     case RunStage.HOLDING_BREATH:
-      return <HoldBreath time={time} onDone={dispatchNextStage} />;
+      return (
+        <HoldBreath
+          saveValue={dispatchSaveValue}
+          time={time}
+          onDone={dispatchNextStage}
+        />
+      );
     case RunStage.RECOVERY_BREATH:
       return <RecoveryBreath onDone={dispatchNextStage} />;
   }
@@ -43,19 +58,24 @@ export const RunScreen: React.VFC<Props> = ({ route, navigation }) => {
   const [breathingState, dispatch] = useReducer(breathReducer, {
     breathingSpeed: initBreathingSpeed,
     currentStage: RunStage.BREATHING,
+    savedRounds: [],
     ...getUpcomingRound(rounds),
   });
   const { breathingSpeed, currentRound } = breathingState;
   const dispatchNextStage = compose(dispatch, setNextBreathingStage);
+  const dispatchSaveValue = compose(dispatch, setSaveValue);
 
   useEffect(() => {
     if (breathingState.currentRound === undefined) {
-      navigation.navigate('Selection');
+      navigation.navigate('Summary', {
+        rounds: getSavedRounds(breathingState),
+      });
     }
   }, [breathingState]);
 
   const runComponent = getRunState(breathingState.currentStage, {
     breathingSpeed,
+    dispatchSaveValue,
     dispatchNextStage,
     time: convertMinuteIntoSeconds(currentRound?.time ?? 1.3),
   });
@@ -66,7 +86,11 @@ export const RunScreen: React.VFC<Props> = ({ route, navigation }) => {
       <View style={styles.buttonContainer}>
         <CustomButton onPress={() => dispatchNextStage()} text='Next' />
         <CustomButton
-          onPress={() => navigation.pop()}
+          onPress={() =>
+            navigation.navigate('Summary', {
+              rounds: getSavedRounds(breathingState),
+            })
+          }
           text='Quit'
           backgroundColor='#a32727'
         />

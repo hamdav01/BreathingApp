@@ -7,17 +7,19 @@ interface Props {
   backgroundColor?: string;
   textColor?: string;
   width?: number;
+  loading?: boolean;
 }
 
 const CustomButton: React.VFC<Props> = ({
   onPress,
   text,
+  loading = false,
   width = 100,
   backgroundColor = '#528feb',
   textColor = '#e9edf5',
 }) => {
   return (
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity disabled={loading} onPress={onPress}>
       <View
         style={StyleSheet.flatten([styles.button, { backgroundColor, width }])}
       >

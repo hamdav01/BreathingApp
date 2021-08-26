@@ -6,6 +6,7 @@ import { Values } from '../utils/Types';
 enum BreathingActions {
   NEXT = 'NEXT',
   FINISH = 'FINISH',
+  SAVE_VALUE = 'SAVE_VALUE',
 }
 
 export enum RunStage {
@@ -15,14 +16,28 @@ export enum RunStage {
   NOT_STARTED = 'NotStarted',
 }
 
-type Actions = ReturnType<typeof setNextBreathingStage>;
+type Actions = ReturnTypeSetNextBreathingStage | ReturnTypeSetSaveValue;
 
-interface ReturnTypeNext {
+interface ReturnTypeSetNextBreathingStage {
   type: BreathingActions.NEXT;
 }
 
-export const setNextBreathingStage = (): ReturnTypeNext => ({
+export const setNextBreathingStage = (): ReturnTypeSetNextBreathingStage => ({
   type: BreathingActions.NEXT,
+});
+
+interface ReturnTypeSetSaveValue {
+  payload: {
+    saveValue: number;
+  };
+  type: BreathingActions.SAVE_VALUE;
+}
+
+export const setSaveValue = (saveValue: number): ReturnTypeSetSaveValue => ({
+  payload: {
+    saveValue,
+  },
+  type: BreathingActions.SAVE_VALUE,
 });
 
 export const getUpcomingRound = (rounds?: RoundType[]) => {
@@ -37,6 +52,9 @@ export const getUpcomingRound = (rounds?: RoundType[]) => {
     currentRound: head(rounds),
   };
 };
+
+export const getSavedRounds = ({ savedRounds }: BreathingReducerConfig) =>
+  savedRounds;
 
 const updateToNextStage = ({
   currentStage,
@@ -58,6 +76,7 @@ interface BreathingReducerConfig {
   currentStage: RunStage;
   rounds?: RoundType[];
   currentRound?: RoundType;
+  savedRounds: number[];
   breathingSpeed: Values<typeof BreathingSpeeds>;
 }
 
@@ -66,6 +85,15 @@ export const breathReducer = (
   action: Actions
 ) => {
   switch (action.type) {
+    case BreathingActions.SAVE_VALUE:
+      console.log('SAVE VALUE: ', [
+        ...state.savedRounds,
+        action.payload.saveValue,
+      ]);
+      return {
+        ...state,
+        savedRounds: [...state.savedRounds, action.payload.saveValue],
+      };
     case BreathingActions.NEXT:
       return {
         ...state,
