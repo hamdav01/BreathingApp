@@ -9,12 +9,13 @@ import {
 import { StackScreenProps } from '@react-navigation/stack';
 import { RootStackParamList, Values } from './utils/Types';
 import Round, { RoundType } from '../components/Rounds';
-import { eqProps, findIndex, inc, update, prop } from 'ramda';
+import { eqProps, findIndex, update, prop } from 'ramda';
 import shortid from 'shortid';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import CustomButton from '../components/Button';
-import { MaterialIcons } from '@expo/vector-icons';
+import { createIndexArray } from './utils/Array';
+import { Picker } from '@react-native-picker/picker';
 
 type Props = StackScreenProps<RootStackParamList, 'Selection'>;
 export const BreathingSpeeds = {
@@ -59,15 +60,21 @@ const createGenerateBreathingPicks =
       />
     );
 
+const breathingArray = createIndexArray(30).map((value) => value + 20);
+
 const SelectionScreen: React.VFC<Props> = ({ navigation }) => {
   const [rounds, setRounds] = useState<RoundType[]>([]);
   const [breathingSpeed, setBreathingSpeed] = useState<
     Values<typeof BreathingSpeeds>
   >(BreathingSpeeds.MEDIUM);
+
+  const [breaths, setBreaths] = useState<number>(30);
+
   const onPress = () =>
     navigation.navigate('Run', {
       breathingSpeed,
       rounds: rounds.length === 0 ? undefined : rounds,
+      breaths,
     });
   const onAddRound = () => {
     setRounds((currentRounds) => [
@@ -94,6 +101,27 @@ const SelectionScreen: React.VFC<Props> = ({ navigation }) => {
           {breathingPicks.map(
             createGenerateBreathingPicks(breathingSpeed, setBreathingSpeed)
           )}
+        </View>
+        <Text style={styles.titleText}>Amount of breaths</Text>
+        <View style={styles.amountOfBreathsSection}>
+          <View style={styles.picker}>
+            <Picker
+              style={{
+                height: 50,
+                width: 150,
+              }}
+              selectedValue={breaths}
+              onValueChange={setBreaths}
+            >
+              {breathingArray.map((value) => (
+                <Picker.Item
+                  key={`Picker breaths: ${value}`}
+                  label={String(value)}
+                  value={value}
+                />
+              ))}
+            </Picker>
+          </View>
         </View>
         <View style={styles.fill}>
           <Text
@@ -134,6 +162,17 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     flexDirection: 'row',
   },
+  picker: {
+    borderColor: '#d3d3d3',
+    borderWidth: 1,
+    borderRadius: 8,
+  },
+  amountOfBreathsSection: {
+    paddingVertical: 10,
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderColor: '#d3d3d3',
+  },
   container: {
     flex: 1,
     backgroundColor: '#F5F5F5',
@@ -156,9 +195,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   titleText: {
-    fontSize: 28,
+    fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 5,
   },
   startButtonContainer: {
     marginVertical: 26,

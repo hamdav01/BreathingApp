@@ -10,7 +10,10 @@ const Stack = createStackNavigator();
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Summary'>
+      <Stack.Navigator
+        initialRouteName='Selection'
+        screenOptions={{ headerLeft: () => null }}
+      >
         <Stack.Screen name='Selection' component={SelectionScreen} />
         <Stack.Screen name='Run' component={RunScreen} />
         <Stack.Screen name='Summary' component={SummaryScreen} />

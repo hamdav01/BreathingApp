@@ -29,15 +29,16 @@ const Button: React.VFC<ButtonProps> = ({
     </TouchableOpacity>
   );
 };
-const values = [1, 1.5, 2, 2.5, 3, 3.5, 4];
 
 interface ButtonSliderProps {
   onPress: (value: number) => void;
   activeValue: number;
+  values?: number[];
 }
 const ButtonSlider: React.VFC<ButtonSliderProps> = ({
   onPress,
   activeValue,
+  values = [1, 1.5, 2, 2.5, 3, 3.5, 4],
 }) => {
   return (
     <View style={styles.container}>

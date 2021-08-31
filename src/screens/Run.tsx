@@ -17,6 +17,9 @@ import {
 } from './reducers/BreathingReducer';
 import { convertMinuteIntoSeconds } from './utils/Number';
 import { RootStackParamList } from './utils/Types';
+import { Audio } from 'expo-av';
+import { useSound } from './utils/Sounds';
+import { relaxingAmbience } from './utils/SoundFile';
 
 type Props = StackScreenProps<RootStackParamList, 'Run'>;
 
@@ -25,6 +28,7 @@ interface GetRunStateConfig {
   dispatchNextStage: () => void;
   time: number;
   dispatchSaveValue: (saveValue: number) => void;
+  breaths: number;
 }
 const getRunState = (
   stage: RunStage,
@@ -32,13 +36,18 @@ const getRunState = (
     breathingSpeed,
     dispatchNextStage,
     time,
+    breaths,
     dispatchSaveValue,
   }: GetRunStateConfig
 ) => {
   switch (stage) {
     case RunStage.BREATHING:
       return (
-        <Breathing breathingSpeed={breathingSpeed} onDone={dispatchNextStage} />
+        <Breathing
+          breaths={breaths}
+          breathingSpeed={breathingSpeed}
+          onDone={dispatchNextStage}
+        />
       );
     case RunStage.HOLDING_BREATH:
       return (
@@ -54,7 +63,7 @@ const getRunState = (
 };
 
 export const RunScreen: React.VFC<Props> = ({ route, navigation }) => {
-  const { breathingSpeed: initBreathingSpeed, rounds } = route.params;
+  const { breathingSpeed: initBreathingSpeed, rounds, breaths } = route.params;
   const [breathingState, dispatch] = useReducer(breathReducer, {
     breathingSpeed: initBreathingSpeed,
     currentStage: RunStage.BREATHING,
@@ -64,7 +73,7 @@ export const RunScreen: React.VFC<Props> = ({ route, navigation }) => {
   const { breathingSpeed, currentRound } = breathingState;
   const dispatchNextStage = compose(dispatch, setNextBreathingStage);
   const dispatchSaveValue = compose(dispatch, setSaveValue);
-
+  useSound({ soundToPlay: relaxingAmbience });
   useEffect(() => {
     if (breathingState.currentRound === undefined) {
       navigation.navigate('Summary', {
@@ -72,11 +81,11 @@ export const RunScreen: React.VFC<Props> = ({ route, navigation }) => {
       });
     }
   }, [breathingState]);
-
   const runComponent = getRunState(breathingState.currentStage, {
     breathingSpeed,
     dispatchSaveValue,
     dispatchNextStage,
+    breaths,
     time: convertMinuteIntoSeconds(currentRound?.time ?? 1.3),
   });
 

@@ -6,7 +6,11 @@ export type RootStackParamList = {
   Summary: {
     rounds: number[];
   };
-  Run: { breathingSpeed: Values<typeof BreathingSpeeds>; rounds?: RoundType[] };
+  Run: {
+    breathingSpeed: Values<typeof BreathingSpeeds>;
+    rounds?: RoundType[];
+    breaths: number;
+  };
 };
 
 export type Values<T> = T[keyof T];

@@ -14,21 +14,15 @@ type Props = StackScreenProps<RootStackParamList, 'Summary'>;
 
 export const SummaryScreen: React.VFC<Props> = ({ route, navigation }) => {
   const [saving, setIsSaving] = useState(false);
-  const roundsData = route?.params?.rounds ?? [1, 2, 3, 10, 11];
+  const roundsData = route?.params?.rounds;
   const average = calculateAverage(roundsData);
   const onOk = async () => {
     setIsSaving(true);
     const date = getTodaysDate();
-    console.log('date : ', date);
     try {
       await storeObjectData(date, { average, roundsData });
-      const t = await getStoredObjectData(date);
-      console.log('t: ', t);
       navigation.navigate('Selection');
-    } catch (e) {
-    } finally {
-      setIsSaving(false);
-    }
+    } catch (e) {}
   };
 
   return (
@@ -64,19 +58,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
   },
   odd: {
-    backgroundColor: 'd3d3d3',
+    backgroundColor: '#ededed',
   },
   text: {
     fontSize: 24,
     fontWeight: '400',
   },
   even: {
-    backgroundColor: '#FFF',
+    backgroundColor: '#F5F5F5',
   },
   tableRow: {
     padding: 10,
     borderRadius: 2,
-    width: 400,
+    width: 300,
     justifyContent: 'space-between',
     flexDirection: 'row',
   },

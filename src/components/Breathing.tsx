@@ -2,14 +2,18 @@ import React, { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, Text, View } from 'react-native';
 import useCountUp from './hooks/UseCountUp';
 
-const countUpAmount = 29;
 interface Props {
-  onDone: () => void;
+  readonly onDone: () => void;
   readonly breathingSpeed: number;
+  readonly breaths: number;
 }
 
-const Breathing: React.VFC<Props> = ({ onDone, breathingSpeed = 3000 }) => {
-  const [counter] = useCountUp(countUpAmount, breathingSpeed, onDone);
+const Breathing: React.VFC<Props> = ({
+  onDone,
+  breathingSpeed = 3000,
+  breaths,
+}) => {
+  const [counter] = useCountUp(breaths - 1, breathingSpeed, onDone);
   const scaleAnimation = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
