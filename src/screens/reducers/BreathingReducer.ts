@@ -86,10 +86,6 @@ export const breathReducer = (
 ) => {
   switch (action.type) {
     case BreathingActions.SAVE_VALUE:
-      console.log('SAVE VALUE: ', [
-        ...state.savedRounds,
-        action.payload.saveValue,
-      ]);
       return {
         ...state,
         savedRounds: [...state.savedRounds, action.payload.saveValue],

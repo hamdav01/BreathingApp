@@ -1,5 +1,4 @@
 import { StackScreenProps } from '@react-navigation/stack';
-import { length, sum, divide, add } from 'ramda';
 import React from 'react';
 import { useState } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
@@ -7,7 +6,7 @@ import shortid from 'shortid';
 import CustomButton from '../components/Button';
 import { getTodaysDate } from './utils/Date';
 import { calculateAverage } from './utils/Number';
-import { getStoredObjectData, storeObjectData } from './utils/Storage';
+import { storeObjectData } from './utils/Storage';
 import { RootStackParamList } from './utils/Types';
 
 type Props = StackScreenProps<RootStackParamList, 'Summary'>;

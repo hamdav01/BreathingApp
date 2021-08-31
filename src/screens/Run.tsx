@@ -1,8 +1,7 @@
 import { StackScreenProps } from '@react-navigation/stack';
 import { compose } from 'ramda';
 import React, { useEffect, useReducer } from 'react';
-import { useRef } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
 import Breathing from '../components/Breathing';
 import CustomButton from '../components/Button';
 import HoldBreath from '../components/HoldBreath';
@@ -17,7 +16,6 @@ import {
 } from './reducers/BreathingReducer';
 import { convertMinuteIntoSeconds } from './utils/Number';
 import { RootStackParamList } from './utils/Types';
-import { Audio } from 'expo-av';
 import { useSound } from './utils/Sounds';
 import { relaxingAmbience } from './utils/SoundFile';
 
@@ -75,12 +73,23 @@ export const RunScreen: React.VFC<Props> = ({ route, navigation }) => {
   const dispatchSaveValue = compose(dispatch, setSaveValue);
   useSound({ soundToPlay: relaxingAmbience });
   useEffect(() => {
-    if (breathingState.currentRound === undefined) {
+    const onNavigate = () => {
       navigation.navigate('Summary', {
         rounds: getSavedRounds(breathingState),
       });
+    };
+    if (breathingState.currentRound === undefined) {
+      onNavigate();
     }
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity onPress={onNavigate}>
+          <Text style={styles.finish}>Quit</Text>
+        </TouchableOpacity>
+      ),
+    });
   }, [breathingState]);
+
   const runComponent = getRunState(breathingState.currentStage, {
     breathingSpeed,
     dispatchSaveValue,
@@ -94,15 +103,6 @@ export const RunScreen: React.VFC<Props> = ({ route, navigation }) => {
       {runComponent}
       <View style={styles.buttonContainer}>
         <CustomButton onPress={() => dispatchNextStage()} text='Next' />
-        <CustomButton
-          onPress={() =>
-            navigation.navigate('Summary', {
-              rounds: getSavedRounds(breathingState),
-            })
-          }
-          text='Quit'
-          backgroundColor='#a32727'
-        />
       </View>
     </View>
   );
@@ -113,12 +113,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5F5F5',
   },
+  finish: {
+    color: '#a32727',
+    marginRight: 4,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
   buttonContainer: {
-    flexDirection: 'row',
     bottom: 20,
     position: 'absolute',
-    width: '100%',
-    justifyContent: 'space-evenly',
+    alignSelf: 'center',
   },
 });
 

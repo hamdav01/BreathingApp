@@ -6,6 +6,7 @@ import {
   modulo,
   compose,
   sum,
+  defaultTo,
   length,
 } from 'ramda';
 
@@ -19,4 +20,7 @@ export const convertSecondsIntoMinute = converge(convertIntoMinuteFormat, [
   modulo(__, 60),
 ]);
 
-export const calculateAverage = converge(divide, [sum, length]);
+export const calculateAverage = compose(
+  defaultTo(0),
+  converge(divide, [sum, length])
+) as (rounds: number[]) => number;
