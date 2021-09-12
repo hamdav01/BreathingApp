@@ -1,5 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, Text, View } from 'react-native';
+import { BreathingSpeeds } from '../screens/Selection';
+import { breathing } from '../screens/utils/SoundFile';
+import { useSound } from '../screens/utils/Sounds';
 import useCountUp from './hooks/UseCountUp';
 
 interface Props {
@@ -8,6 +11,15 @@ interface Props {
   readonly breaths: number;
 }
 
+const getPlaybackRate = (breathingSpeed: number) => {
+  if (BreathingSpeeds.SLOW === breathingSpeed) {
+    return 1.05;
+  } else if (BreathingSpeeds.MEDIUM === breathingSpeed) {
+    return 1.4;
+  }
+  return 2.15;
+};
+
 const Breathing: React.VFC<Props> = ({
   onDone,
   breathingSpeed = 3000,
@@ -15,6 +27,13 @@ const Breathing: React.VFC<Props> = ({
 }) => {
   const [counter] = useCountUp(breaths - 1, breathingSpeed, onDone);
   const scaleAnimation = useRef(new Animated.Value(0)).current;
+
+  const { stopSound } = useSound({
+    soundToPlay: breathing,
+    playInitial: true,
+    loop: true,
+    playback: getPlaybackRate(breathingSpeed),
+  });
 
   useEffect(() => {
     Animated.loop(
@@ -32,6 +51,9 @@ const Breathing: React.VFC<Props> = ({
       ]),
       { iterations: -1 }
     ).start();
+    return () => {
+      stopSound();
+    };
   }, []);
 
   return (

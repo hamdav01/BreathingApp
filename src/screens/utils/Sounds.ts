@@ -7,12 +7,16 @@ interface UseSound {
   soundToPlay: AVPlaybackSource;
   playInitial?: boolean;
   volume?: number;
+  loop?: boolean;
+  playback?: number;
 }
 
 export const useSound = ({
   soundToPlay,
   playInitial = false,
   volume = 1.0,
+  loop = false,
+  playback = 1.0,
 }: UseSound) => {
   const [sound, setSound] = useState<Audio.Sound>();
 
@@ -38,11 +42,11 @@ export const useSound = ({
     const initSound = async () => {
       const { sound } = await Audio.Sound.createAsync(soundToPlay, {
         volume,
+        rate: playback,
+        isLooping: loop,
+        shouldPlay: playInitial,
       });
       setSound(sound);
-      if (playInitial) {
-        await sound.playAsync();
-      }
     };
     initSound();
   }, []);
