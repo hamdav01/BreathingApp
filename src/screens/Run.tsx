@@ -17,7 +17,7 @@ import {
 import { convertMinuteIntoSeconds } from './utils/Number';
 import { RootStackParamList } from './utils/Types';
 import { useSound } from './utils/Sounds';
-import { relaxingAmbience } from './utils/SoundFile';
+import { gong, relaxingAmbience } from './utils/SoundFile';
 
 type Props = StackScreenProps<RootStackParamList, 'Run'>;
 
@@ -71,8 +71,13 @@ export const RunScreen: React.VFC<Props> = ({ route, navigation }) => {
   const { breathingSpeed, currentRound } = breathingState;
   const dispatchNextStage = compose(dispatch, setNextBreathingStage);
   const dispatchSaveValue = compose(dispatch, setSaveValue);
-  useSound({ soundToPlay: relaxingAmbience });
+  useSound({ soundToPlay: relaxingAmbience, playInitial: true });
+  const { playSound: playGongSound } = useSound({
+    soundToPlay: gong,
+    volume: 0.3,
+  });
   useEffect(() => {
+    playGongSound();
     const onNavigate = () => {
       navigation.navigate('Summary', {
         rounds: getSavedRounds(breathingState),

@@ -6,15 +6,24 @@ import { useCallback, useEffect, useState } from 'react';
 interface UseSound {
   soundToPlay: AVPlaybackSource;
   playInitial?: boolean;
+  volume?: number;
 }
 
-export const useSound = ({ soundToPlay, playInitial = true }: UseSound) => {
+export const useSound = ({
+  soundToPlay,
+  playInitial = false,
+  volume = 1.0,
+}: UseSound) => {
   const [sound, setSound] = useState<Audio.Sound>();
 
   const playSound = async () => {
-    const { sound } = await Audio.Sound.createAsync(soundToPlay);
-    setSound(sound);
-    await sound.playAsync();
+    if (sound) {
+      const status = await sound.getStatusAsync();
+
+      if (status.isLoaded && !status.isPlaying) {
+        await sound.playAsync();
+      }
+    }
   };
 
   const unloadSound = (time = 1000) => {
@@ -26,9 +35,16 @@ export const useSound = ({ soundToPlay, playInitial = true }: UseSound) => {
   useFocusEffect(useCallback(() => unloadSound, [sound]));
 
   useEffect(() => {
-    if (playInitial) {
-      playSound();
-    }
+    const initSound = async () => {
+      const { sound } = await Audio.Sound.createAsync(soundToPlay, {
+        volume,
+      });
+      setSound(sound);
+      if (playInitial) {
+        await sound.playAsync();
+      }
+    };
+    initSound();
   }, []);
   return { playSound, stopSound: unloadSound };
 };
@@ -41,7 +57,7 @@ const rampVolume = async (
   const status = await sound.getStatusAsync();
   let currentTime = targetTime;
   let previousTimeStamp = 0;
-  if (status.isLoaded) {
+  if (status.isLoaded && status.volume > 0) {
     const { volume } = status;
     const amountToRemove = volume - targetVolume;
     return new Promise(() => {
@@ -51,7 +67,7 @@ const rampVolume = async (
         currentTime = clamp(0, Infinity, currentTime - time);
         const percentageLeft = currentTime / targetTime;
         await sound.setVolumeAsync(
-          volume - (1 - percentageLeft * amountToRemove)
+          volume - (status.volume - percentageLeft * amountToRemove)
         );
         previousTimeStamp = timeStamp;
         if (currentTime <= 0) {
